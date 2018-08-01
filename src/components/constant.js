@@ -1,8 +1,3 @@
-export const StartStatus = {
-  starting: "starting",
-  stopping: "stopping"
-};
-
 export const ItemStatus = {
   normal: "normal",
   highLight: "highLight",

@@ -6,7 +6,6 @@
 
 <script>
 import {
-  StartStatus as startStatusEnum,
   ItemStatus as itemStatus,
   ItemNum as itemNum,
   ProcessStatus as processStatus
@@ -91,13 +90,11 @@ export default {
       );
       // start 组件的事件绑定
       if (this.startEls) {
-        this.startEls.$on("toggle", status => {
-          if (startStatusEnum.starting === status) {
-            this.start();
-          } else {
-            this.stop();
-          }
-        });
+        /**
+         * 所有关于开始停止的状态都在 lottery-marquee-start 组件中处理。 this.status 用this.startEls.status代替
+         */
+        // 只监听 start和stop事件？
+        this.startEls.$on("start", this.start);
       } else {
         throw new Error("需要一个 lottery-marquee-start 组件");
       }
@@ -105,12 +102,6 @@ export default {
       this.itemsEls[0].status = itemStatus.selected;
     },
     async start() {
-      console.log("start");
-      if (this.status !== processStatus.stopped) {
-        console.warn("还有抽奖正在进行");
-        return;
-      }
-      this.status = processStatus.progress;
       let currentTableItem = this.currentTableItem;
       let time = 50;
       let stopTime = 0;
@@ -119,7 +110,7 @@ export default {
         this.itemsEls[currentTableItem.index].status = itemStatus.highLight;
         await _sleep(time);
         currentTableItem = currentTableItem.next;
-        if (this.status === processStatus.stopping) {
+        if (this.startEls.status === processStatus.stopping) {
           // 停止准备
           // 忽略第一次到达停止位置。
           if (stopTime === 1) {
@@ -130,22 +121,23 @@ export default {
           if (currentTableItem.index === this.resultIndex && stopTime === 0) {
             stopTime++;
           }
-        } else if (this.status === processStatus.stopped) {
+        } else if (this.startEls.status === processStatus.stopped) {
           leaveNum = 0;
         }
       } while (!!leaveNum);
       this.itemsEls[currentTableItem.index].status = itemStatus.selected;
       this.currentTableItem = currentTableItem;
-      if (this.status === processStatus.stopping) {
-        this.status = processStatus.stopped;
+      if (this.startEls.status === processStatus.stopping) {
+        this.startEls.status = processStatus.stopped;
       }
-    },
-    stop(index) {
-      console.log("stop");
-      this.status = processStatus.stopping;
-      // 可以直接停止，这样没法指定在什么地方停止了。this.currentTableItem 可以获取实际停止的位置
-      // this.status = processStatus.stopped;
     }
+    // ,
+    // stop(index) {
+    //   console.log("stop");
+    //   this.status = processStatus.stopping;
+    //   // 可以直接停止，这样没法指定在什么地方停止了。this.currentTableItem 可以获取实际停止的位置
+    //   // this.status = processStatus.stopped;
+    // }
   }
 };
 </script>

@@ -2,14 +2,14 @@
   <div class="lottery-marquee-sample">
     <lottery-marquee class="marquee--body">
       <lottery-marquee-item v-for="i in 4" :key="i">
-        <div class="marquee--item">lottery-marquee-item {{i}}</div>
+        <div slot-scope="{ status }" class="marquee--item">{{ status }}</div>
       </lottery-marquee-item>
-      <lottery-marquee-start>
-        <div class="marquee--item" slot="starting">starting</div>
-        <div class="marquee--item" slot="stopping">stopping</div>
+      <lottery-marquee-start :auto="false" @start="start" @stop="stop">
+        <div class="marquee--item" slot="progress" slot-scope="{ status }">{{ status }}</div>
+        <div class="marquee--item" slot="stopped" slot-scope="{ status }">{{ status }}</div>
       </lottery-marquee-start>
       <lottery-marquee-item v-for="i in [5, 6, 7, 8]" :key="i">
-        <div class="marquee--item">lottery-marquee-item {{i}}</div>
+        <div slot-scope="{ status }" class="marquee--item">{{ status }}</div>
       </lottery-marquee-item>
     </lottery-marquee>
   </div>
@@ -41,6 +41,12 @@ export default {
   methods: {
     // init() {
     // }
+    start() {
+      console.log(1, "start");
+    },
+    stop() {
+      console.log(1, "stop");
+    }
   }
 };
 </script>

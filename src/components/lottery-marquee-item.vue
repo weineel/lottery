@@ -1,7 +1,6 @@
 <template>
   <div class="lottery-marquee-item">
-    <slot></slot>
-    <span style="color: red">{{ status }}</span>
+    <slot :status="status">{{ status }}</slot>
   </div>
 </template>
 
